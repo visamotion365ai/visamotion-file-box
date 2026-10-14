@@ -1,0 +1,27 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Syntax-check serverless functions
+        run: |
+          for f in api/*.js; do node --check "$f"; echo "ok $f"; done
+      - name: Verify no secrets committed
+        run: |
+          if grep -rInE "(GEMINI_API_KEY|GROQ_API_KEY|OPENROUTER_API_KEY|SERVICE_ROLE|secret_|sk-[A-Za-z0-9]{20,})" --include=*.js --include=*.html --include=*.json . | grep -v ".env.example" | grep -v "process.env"; then
+            echo "::error::Possible secret committed"; exit 1;
+          fi
+          echo "no secrets detected"
+      - name: Check index.html exists
+        run: test -f index.html && echo "index.html present"
+      - name: Served file syntax (extract inline scripts)
+        run: node scripts/check-inline-js.js || true

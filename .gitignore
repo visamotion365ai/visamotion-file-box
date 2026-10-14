@@ -1,5 +1,14 @@
 node_modules/
-.DS_Store
-*.log
-.vercel
 .env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.vercel
+dist/
+build/
+# never commit real client data or generated private files
+uploads/
+documents/
+generated/
+*.zip

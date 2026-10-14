@@ -1,6 +1,16 @@
-module.exports = (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin','*');
-  res.setHeader('Cache-Control','no-store');
-  const live = !!(process.env.GEMINI_API_KEY || process.env.BROWSER_USE_API_KEY);
-  res.status(200).json({ live, provider: process.env.GEMINI_API_KEY ? 'gemini' : (live?'browser-use':'none') });
+module.exports = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 'no-store');
+  const mod = require('./ai');
+  const fakeRes = {
+    setHeader() {}, status(c) { this._c = c; return this; },
+    json(o) {
+      const st = o.providers || {};
+      const live = Object.values(st).some(v => v.configured);
+      res.status(200).json({ live, provider: o.provider || (st.gemini?.configured ? 'gemini' : st.groq?.configured ? 'groq' : st.openrouter?.configured ? 'openrouter' : 'none'), providers: st });
+      return this;
+    },
+    end() { res.status(200).json({ live: false, provider: 'none', providers: {} }); return this; },
+  };
+  return mod({ method: 'GET', body: { action: 'status' } }, fakeRes);
 };
