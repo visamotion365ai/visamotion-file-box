@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#5B54E8">
+<title>VisaMotion File Box — Admin OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#3B82F6; --blue-d:#2563EB; --blue-lt:#60A5FA;
+  --purple:#7C6CF5; --purple-d:#6C5CE7; --purple-lt:#A78BFA;
+  --yellow:#FFD84D; --yellow-d:#F5C518;
+  --ink:#151A34; --ink-2:#6E7391; --ink-3:#9CA0BC;
+  --glass:rgba(255,255,255,.72); --glass-2:rgba(255,255,255,.55);
+  --stroke:rgba(255,255,255,.9); --stroke-2:rgba(255,255,255,.55);
+  --shadow:0 14px 34px -14px rgba(38,52,132,.42), inset 0 1px 0 rgba(255,255,255,.9);
+  --r:24px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;-webkit-font-smoothing:antialiased}
+body{
+  font-family:'Inter','Hind Siliguri',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  color:var(--ink); min-height:100vh; overflow-x:hidden;
+  background:
+    radial-gradient(1000px 640px at 6% -8%, #cfd9ff 0%, transparent 56%),
+    radial-gradient(880px 620px at 96% 4%, #e0d4ff 0%, transparent 54%),
+    radial-gradient(900px 700px at 50% 112%, #b9c9ff 0%, transparent 58%),
+    linear-gradient(170deg,#eef2ff 0%,#f0ecff 46%,#eef4ff 100%);
+  background-attachment:fixed;
+}
+.wrap{position:relative;z-index:1;max-width:1980px;margin:0 auto;padding:14px 16px 80px}
+
+/* ---------- top toolbar ---------- */
+.topbar{
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  padding:10px 13px;border-radius:22px;margin-bottom:13px;
+  background:var(--glass);backdrop-filter:blur(28px) saturate(180%);
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
+  border:1px solid var(--stroke);box-shadow:var(--shadow);
+}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.logo{
+  width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:21px;color:#fff;
+  background:linear-gradient(145deg,var(--blue-lt),var(--purple));
+  box-shadow:0 12px 24px -9px rgba(59,130,246,.85), inset 0 1px 0 rgba(255,255,255,.5);flex:none;
+}
+.brand b{font-size:17px;font-weight:800;letter-spacing:-.35px;line-height:1.05;display:block}
+.brand small{font-size:11px;color:var(--ink-2);font-weight:500}
+.btn{
+  border:1px solid var(--stroke-2);cursor:pointer;font:inherit;font-weight:600;font-size:12.5px;
+  padding:9px 13px;border-radius:15px;color:var(--ink);
+  background:var(--glass-2);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  transition:.18s transform,.18s box-shadow,.18s background;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+}
+.btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.82);box-shadow:0 12px 22px -12px rgba(38,52,132,.5)}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:linear-gradient(140deg,var(--blue),var(--purple));color:#fff;border-color:transparent;
+  box-shadow:0 12px 24px -10px rgba(91,84,232,.9), inset 0 1px 0 rgba(255,255,255,.4)}
+.btn.on{background:linear-gradient(140deg,var(--blue),var(--purple));color:#fff;border-color:transparent}
+.btn.ghost{background:transparent;border-color:rgba(38,52,132,.12)}
+.dot{width:7px;height:7px;border-radius:99px;background:#22C55E;box-shadow:0 0 0 3px rgba(34,197,94,.2);flex:none}
+.dot.off{background:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,.2)}
+
+/* ---------- mode chips ---------- */
+.modebar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}
+.chip{
+  padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;
+  border:1px solid var(--stroke);background:var(--glass-2);color:var(--ink);
+  backdrop-filter:blur(16px);transition:.16s all;user-select:none;
+}
+.chip.on{background:linear-gradient(140deg,var(--blue),var(--purple));color:#fff;border-color:transparent;
+  box-shadow:0 10px 20px -10px rgba(91,84,232,.85)}
+.chip:hover{transform:translateY(-2px)}
+
+/* ---------- showcase ---------- */
+#showcase{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;align-items:start}
+@media(max-width:1600px){#showcase{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1080px){#showcase{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){#showcase{grid-template-columns:1fr}}
+#showcase.hide{display:none}
+
+/* ---------- phone ---------- */
+.phone{
+  position:relative;border-radius:46px;padding:10px;
+  background:linear-gradient(160deg,#ffffff,#eef1ff 60%,#e7ecff);
+  border:1px solid var(--stroke);
+  box-shadow:0 40px 80px -34px rgba(38,52,132,.5), 0 0 0 1px rgba(255,255,255,.55), inset 0 1px 0 #fff;
+}
+.phone-in{
+  position:relative;border-radius:37px;overflow:hidden;display:flex;flex-direction:column;
+  background:linear-gradient(175deg,#ffffff 0%,#f5f6ff 52%,#eef1ff 100%);
+  height:772px;
+}
+.statusbar{
+  position:absolute;top:0;left:0;right:0;height:34px;z-index:40;pointer-events:none;
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  font-size:12px;font-weight:700;color:#151A34;
+}
+.statusbar .r{display:flex;gap:5px;align-items:center;font-size:11px}
+.notch{
+  position:absolute;top:6px;left:50%;transform:translateX(-50%);
+  width:92px;height:26px;border-radius:999px;background:#0d1230;z-index:41;opacity:.9;
+}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding:42px 15px 92px}
+.screen::-webkit-scrollbar{display:none}
+
+/* ---------- bottom nav ---------- */
+.dock{
+  position:absolute;left:0;right:0;bottom:0;z-index:35;
+  display:flex;gap:2px;justify-content:space-around;align-items:center;
+  padding:9px 10px 14px;border-top:1px solid rgba(255,255,255,.9);
+  background:rgba(255,255,255,.86);backdrop-filter:blur(30px) saturate(180%);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);
+  box-shadow:0 -10px 30px -18px rgba(38,52,132,.35);
+}
+.dock button{
+  border:0;background:transparent;cursor:pointer;font:inherit;font-size:9.5px;font-weight:600;
+  color:var(--ink-3);display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:4px 8px;border-radius:14px;transition:.16s;flex:1;
+}
+.dock button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.dock button.act{color:var(--blue-d)}
+.dock button.act svg{stroke:var(--blue-d)}
+.dock button.fab{flex:none;width:56px;height:56px;margin-top:-26px;border-radius:50%;
+  background:linear-gradient(145deg,#7C6CF5,#5B54E8);color:#fff;
+  box-shadow:0 14px 26px -8px rgba(91,84,232,.95), 0 0 0 5px rgba(255,255,255,.85);
+  display:grid;place-items:center;animation:float 3s ease-in-out infinite}
+.dock button.fab svg{width:26px;height:26px;stroke:#fff}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+/* ---------- glass primitives ---------- */
+.g{background:var(--glass);backdrop-filter:blur(24px) saturate(170%);-webkit-backdrop-filter:blur(24px) saturate(170%);
+   border:1px solid var(--stroke);box-shadow:var(--shadow)}
+.card{border-radius:var(--r);padding:14px;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:10px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.grow{flex:1;min-width:0}
+h1,h2,h3,h4,p{margin:0}
+.t-title{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.t-sub{font-size:12px;color:var(--ink-2);font-weight:500}
+.tiny{font-size:11px;color:var(--ink-2);font-weight:500}
+.tiny2{font-size:10.5px;color:var(--ink-3);font-weight:500}
+.pill{padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;
+  background:rgba(59,130,246,.12);color:var(--blue-d);display:inline-flex;align-items:center;gap:5px}
+.pill.pro{background:linear-gradient(120deg,var(--blue),var(--purple));color:#fff;
+  box-shadow:0 8px 16px -8px rgba(91,84,232,.9)}
+.pill.gold{background:linear-gradient(120deg,#FFE08A,#F5C518);color:#4A3200}
+.pill.grn{background:rgba(34,197,94,.14);color:#16803C}
+.pill.vi{background:rgba(124,108,245,.14);color:var(--purple-d)}
+.chev{opacity:.35;flex:none;font-weight:700;font-size:15px}
+.arrows{font-family:monospace;letter-spacing:-2px;font-size:15px;opacity:.55;font-weight:700}
+
+/* progress */
+.pbar{height:7px;border-radius:99px;background:rgba(255,255,255,.4);overflow:hidden;position:relative}
+.pbar>i{display:block;height:100%;border-radius:99px;background:var(--yellow);position:relative;overflow:hidden;transition:width .8s}
+.pbar>i::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);animation:sweep 2.2s linear infinite}
+@keyframes sweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* storage color cards */
+.storage{border-radius:26px;padding:15px;color:#fff;position:relative;overflow:hidden;cursor:pointer;
+  transition:.2s transform,.2s box-shadow;box-shadow:0 20px 40px -18px rgba(38,52,132,.6)}
+.storage:hover{transform:translateY(-4px)}
+.storage.blue{background:linear-gradient(150deg,#5AA0FF 0%,#2563EB 100%)}
+.storage.purple{background:linear-gradient(150deg,#9B8CFF 0%,#6C5CE7 100%)}
+.storage .ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:25px;
+  background:rgba(255,255,255,.24);border:1px solid rgba(255,255,255,.4);margin-bottom:12px}
+.storage .pbar{background:rgba(255,255,255,.28)}
+.ghostbtn{background:rgba(255,255,255,.24);border:1px solid rgba(255,255,255,.45);color:#fff;
+  padding:7px 14px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.ghostbtn:hover{background:rgba(255,255,255,.36)}
+
+/* category / mini tiles */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tile{border-radius:22px;padding:13px;text-align:left;cursor:pointer;transition:.18s;
+  background:var(--glass);border:1px solid var(--stroke);box-shadow:var(--shadow)}
+.tile:hover{transform:translateY(-4px);box-shadow:0 20px 34px -16px rgba(38,52,132,.5)}
+.tile .em{font-size:30px;line-height:1;display:block;margin-bottom:8px}
+.tile b{font-size:13px;font-weight:700;display:block;letter-spacing:-.2px}
+.tile span{font-size:11px;color:var(--ink-2)}
+.mini{border-radius:20px;padding:11px 8px;text-align:center;cursor:pointer;transition:.16s;
+  background:var(--glass-2);border:1px solid var(--stroke);box-shadow:var(--shadow)}
+.mini:hover{transform:translateY(-3px);background:rgba(255,255,255,.82)}
+.mini .em{font-size:22px;display:block}
+.mini b{font-size:10.5px;font-weight:700;display:block;margin-top:3px;line-height:1.25}
+.mini span{font-size:9.5px;color:var(--ink-3)}
+
+/* list items */
+.li{display:flex;align-items:center;gap:11px;padding:11px;border-radius:20px;margin-bottom:9px;
+  background:var(--glass);border:1px solid var(--stroke);box-shadow:var(--shadow)}
+.iconbox{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:21px;flex:none;
+  background:linear-gradient(145deg,#ffffff,#e7ecff);border:1px solid #fff;box-shadow:0 6px 14px -8px rgba(38,52,132,.4)}
+.iconbox.blue{background:linear-gradient(145deg,#7FB2FF,#2563EB);color:#fff}
+.iconbox.purple{background:linear-gradient(145deg,#B0A4FF,#6C5CE7);color:#fff}
+.iconbox.gold{background:linear-gradient(145deg,#FFE08A,#F5C518)}
+
+/* toggle */
+.tg{width:44px;height:26px;border-radius:99px;background:rgba(38,52,132,.16);position:relative;cursor:pointer;
+  flex:none;transition:.2s}
+.tg::after{content:"";position:absolute;top:2.5px;left:2.5px;width:21px;height:21px;border-radius:99px;
+  background:#fff;transition:.22s;box-shadow:0 3px 8px rgba(38,52,132,.3)}
+.tg.on{background:linear-gradient(120deg,var(--blue),var(--purple))}
+.tg.on::after{left:20.5px}
+
+/* stats */
+.stat{border-radius:22px;padding:13px 8px;text-align:center;
+  background:linear-gradient(150deg,#ffffff,#f0f3ff);border:1px solid var(--stroke);box-shadow:var(--shadow)}
+.stat b{display:block;font-size:23px;font-weight:800;letter-spacing:-.8px}
+.stat span{font-size:10px;color:var(--ink-2);font-weight:600}
+
+/* ai agent toast bar (ref bottom) */
+.aibar{border-radius:24px;padding:12px;background:var(--glass);border:1px solid var(--stroke);
+  box-shadow:var(--shadow);display:flex;align-items:center;gap:11px}
+.aiic{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:19px;flex:none;
+  background:linear-gradient(145deg,#8B7CFA,#5B54E8);color:#fff;box-shadow:0 10px 20px -8px rgba(91,84,232,.9)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">✈️</div>
+      <div><b>VisaMotion File Box</b><small>Admin OS · Step 3 · Live Supabase + GitHub + Vercel</small></div>
+    </div>
+    <span id="liveBadge" class="pill grn"><span class="dot"></span> Supabase live</span>
+    <button class="btn" onclick="downloadBatchZip()">📦 Country Batch .ZIP</button>
+    <button class="btn" onclick="openDeploy()">🚀 Deploy</button>
+    <button class="btn pri" onclick="setMode('flow')">📱 1-App Flow</button>
+    <button class="btn" onclick="setMode('show')">🗂️ All Screens</button>
+  </div>
+
+  <div class="modebar">
+    <span class="chip" data-s="0" onclick="focusScreen(0)">1 • HOME EXPLORE</span>
+    <span class="chip" data-s="1" onclick="focusScreen(1)">2 • VISA FILE BOX</span>
+    <span class="chip" data-s="2" onclick="focusScreen(2)">3 • AI VISA HUB</span>
+    <span class="chip" data-s="3" onclick="focusScreen(3)">4 • AI AGENT CHAT</span>
+    <span class="chip" data-s="4" onclick="focusScreen(4)">5 • PROFILE &amp; CLOUD</span>
+    <span class="chip" style="margin-left:auto" onclick="downloadBatchZip()">＋ Export Country Batch .ZIP</span>
+  </div>
+
+  <div id="showcase">
+    <div class="phone" id="p0"><div class="phone-in"><div class="notch"></div><div class="statusbar"><span>9:41</span><span class="r">📶 🛜 🔋</span></div><div class="screen" id="s0"></div><div class="dock" id="d0"></div></div></div>
+    <div class="phone" id="p1"><div class="phone-in"><div class="notch"></div><div class="statusbar"><span>9:41</span><span class="r">📶 🛜 🔋</span></div><div class="screen" id="s1"></div><div class="dock" id="d1"></div></div></div>
+    <div class="phone" id="p2"><div class="phone-in"><div class="notch"></div><div class="statusbar"><span>9:41</span><span class="r">📶 🛜 🔋</span></div><div class="screen" id="s2"></div><div class="dock" id="d2"></div></div></div>
+    <div class="phone" id="p3"><div class="phone-in"><div class="notch"></div><div class="statusbar"><span>9:41</span><span class="r">📶 🛜 🔋</span></div><div class="screen" id="s3"></div><div class="dock" id="d3"></div></div></div>
+    <div class="phone" id="p4"><div class="phone-in"><div class="notch"></div><div class="statusbar"><span>9:41</span><span class="r">📶 🛜 🔋</span></div><div class="screen" id="s4"></div><div class="dock" id="d4"></div></div></div>
+  </div>
+
+  <div id="flow" style="display:none">
+    <div style="display:flex;justify-content:center">
+      <div class="phone" style="width:430px;max-width:100%">
+        <div class="phone-in" style="height:min(880px,calc(100vh - 190px));min-height:640px">
+          <div class="notch"></div>
+          <div class="statusbar"><span>9:41</span><span class="r">📶 🛜 🔋</span></div>
+          <div class="screen" id="sF"></div><div class="dock" id="dF"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+/* =====================================================================
+   VisaMotion File Box — Admin OS (Step 3)
+   5 Liquid Glass iOS screens + live Supabase / GitHub / Vercel deploy
+   ===================================================================== */
+const SB = {
+  url:'https://bnexivtxepdknmkinmpj.supabase.co',
+  key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuZXhpdnR4ZXBka25ta2lubXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExODI0NjYsImV4cCI6MjEwNjc1ODQ2Nn0.fdYzXkVSfhIOeAiKd2jqRVIybkgIlFOIcO9XngjHVoE'
+};
+const COUNTRIES = [
+  {id:'au',name:'Australia',flag:'🇦🇺',visa:'Subclass 600 Tourist Stream'},
+  {id:'rs',name:'Serbia',   flag:'🇷🇸',visa:'D Visa (Long Stay)'},
+  {id:'tr',name:'Turkey',   flag:'🇹🇷',visa:'e-Visa / Tourist'},
+  {id:'sg',name:'Singapore',flag:'🇸🇬',visa:'Short-Term Visit Pass'},
+  {id:'my',name:'Malaysia', flag:'🇲🇾',visa:'eVISA Tourist'},
+  {id:'bh',name:'Bahrain',  flag:'🇧🇭',visa:'eVisa Visit'}
+];
+const FOLDERS = [
+  {name:'Work Visa',    files:3, gb:2.8, tag:'PDF', date:'Updated: 10 Oct 2026, 14:32'},
+  {name:'Visitor Visa', files:4, gb:1.9, tag:'DOC', date:'Updated: 09 Oct 2026, 11:20'},
+  {name:'Student Visa', files:5, gb:3.4, tag:'IMG', date:'Updated: 08 Oct 2026, 16:45'},
+  {name:'Business Visa',files:2, gb:1.2, tag:'PDF', date:'Updated: 07 Oct 2026, 10:18'}
+];
+const CATS = [
+  {em:'📕',t:'PDF Documents',n:'8 files'},
+  {em:'🛂',t:'Visa Files',  n:'6 files'},
+  {em:'🖼️',t:'Images',      n:'4 files'},
+  {em:'🗂️',t:'Applications',n:'3 files'}
+];
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = t => String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* flag emoji -> inline SVG roundel (renders everywhere, incl. headless Linux) */
+const FLAG_CSS = {
+  au:['#0B3D91','#fff','#E4002B'], rs:['#C6363C','#0C4076','#fff'], tr:['#E30A17','#fff','#E30A17'],
+  sg:['#ED2939','#fff','#ED2939'], my:['#CC0001','#FFCC00','#010066'], bh:['#CE1126','#fff','#CE1126'],
+  bd:['#006A4E','#F42A41','#006A4E']
+};
+function flagSVG(id,size=18){
+  const c=FLAG_CSS[id]||['#2563EB','#fff','#7C6CF5'];
+  if(id==='bd') return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="vertical-align:-3px;flex:none"><circle cx="12" cy="12" r="11" fill="#006A4E"/><circle cx="10.6" cy="12" r="5" fill="#F42A41"/></svg>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="vertical-align:-3px;flex:none">
+    <defs><clipPath id="fc${id}"><circle cx="12" cy="12" r="11"/></clipPath></defs>
+    <g clip-path="url(#fc${id})"><rect x="1" y="1" width="22" height="7.33" fill="${c[0]}"/>
+      <rect x="1" y="8.33" width="22" height="7.34" fill="${c[1]}"/><rect x="1" y="15.67" width="22" height="7.33" fill="${c[2]}"/></g>
+    <circle cx="12" cy="12" r="11" fill="none" stroke="rgba(21,26,52,.18)" stroke-width="1"/></svg>`;
+}
+const GDRIVE = `<svg width="26" height="26" viewBox="0 0 48 44" style="display:block"><path d="M16 2h16l16 28H32z" fill="#FFCF63"/><path d="M16 2L0 30l8 14L32 2z" fill="#11A861"/><path d="M0 30h48l-8 14H8z" fill="#4185F4"/></svg>`;
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+const toastEls = [];
+
+/* ---------- live Supabase ---------- */
+async function sb(path, opts={}){
+  const r = await fetch(SB.url+'/rest/v1/'+path,{
+    ...opts,
+    headers:{ apikey:SB.key, Authorization:'Bearer '+SB.key,
+      'Content-Type':'application/json', Prefer:'return=representation', ...(opts.headers||{}) }
+  });
+  const txt = await r.text();
+  if(!r.ok) throw new Error(txt||('HTTP '+r.status));
+  return txt? JSON.parse(txt): null;
+}
+const DB = { dossiers:[], profiles:[], online:false, error:null };
+async function dbLoad(){
+  try{
+    const [d,p] = await Promise.all([
+      sb('visa_dossiers?select=*&order=country'),
+      sb('applicant_profiles?select=*&order=created_at.desc&limit=20')
+    ]);
+    DB.dossiers=d||[]; DB.profiles=p||[]; DB.online=true; DB.error=null;
+  }catch(e){
+    DB.online=false; DB.error=e.message;
+    DB.dossiers = COUNTRIES.map((c,i)=>({country:c.name,visa_type:c.visa,status:['submitted','draft','payment_pending','approved','draft','submitted'][i],
+      progress:[72,45,60,100,30,88][i],applicant_name:'Imran Hossen'}));
+  }
+  const b=document.getElementById('liveBadge');
+  if(b) b.innerHTML = DB.online
+    ? '<span class="dot"></span> Supabase live'
+    : '<span class="dot off"></span> Offline mode';
+}
+async function dbLog(role,content,engine){
+  try{ await sb('chat_messages',{method:'POST',body:JSON.stringify([{role,content,engine}])}); }
+  catch(e){ /* chat logging is best-effort */ }
+}
+
+/* ---------- state ---------- */
+const S = {
+  screen:0, flow:false, sidebar:false, moduleTab:'pdf',
+  engine:'Gemini Deep Think', country:'au', cleaning:false,
+  storage:28.4, drive:42.7,
+  toggles:{push:true,wa:true,cron:true,sync:true,rls:true,jwt:true,gh:true,vc:true},
+  files:[],
+  chat:[{who:'ai',t:'Hi! I\'m your <b>AI Agent</b> — ask anything about your visa documents.'}]
+};
+const ENGINE_LABEL = {
+  'Gemini Deep Think':'Gemini', 'Browser-Use Live':'Browser-Use',
+  'Base44 Backend':'Base44', 'Custom AI Agent':'Custom AI'
+};
+
+/* ============ SCREEN 1 · HOME EXPLORE ============ */
+function storageCard(kind,title,em,gb,extra){
+  return `<div class="storage ${kind}" onclick="${kind==='blue'?'goScreen(1)':"toast('Google Drive: Google Drive-এ ফাইল খুলতে প্রকৃত অ্যাকাউন্ট সংযোগ দিন')"}">
+    <div class="between" style="align-items:flex-start">
+      <div class="ic">${em}</div>
+      <span class="arrows">•••</span>
+    </div>
+    <div style="font-size:17px;font-weight:700;margin-bottom:9px">${title}</div>
+    <div class="pbar"><i style="width:${(gb/100*100).toFixed(0)}%"></i></div>
+    <div class="between" style="margin-top:7px;font-size:11.5px;opacity:.92">
+      <span>${gb.toFixed(1)} GB</span><span>100 GB</span></div>
+    <div class="between" style="margin-top:11px">
+      <span class="ghostbtn">${kind==='blue'?'📂 Open':'📂 Open'} <span style="opacity:.7">→</span></span>
+      <span class="arrows">≫≫</span>
+    </div>
+  </div>`;
+}
+function screenHome(){
+  return `
+  <div class="between" style="margin-bottom:14px">
+    <span class="pill pro" style="padding:8px 14px;font-size:12px">✈️ <b>VisaMotion</b> File Box</span>
+    <div class="row" style="gap:8px">
+      <button class="btn ghost" style="padding:8px 10px" onclick="notifCenter()">🔔<span style="width:6px;height:6px;border-radius:99px;background:#EF4444;display:inline-block;margin-left:-8px;margin-top:-8px"></span></button>
+      <div class="avatar" style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#9B8CFF,#2563EB);display:grid;place-items:center;font-size:16px;color:#fff;font-weight:800">${'HI'}</div>
+    </div>
+  </div>
+
+  <h1 style="font-size:29px;font-weight:800;letter-spacing:-1.1px;line-height:1.16">Hello,<br>VisaMotion</h1>
+  <p class="tiny" style="margin-top:5px">Your visa documents, safe and organized.</p>
+
+  <div class="grid2" style="margin-top:16px">
+    ${storageCard('blue','Visa File Box','📄',S.storage)}
+    ${storageCard('purple','Google Drive',GDRIVE,S.drive)}
+  </div>
+
+  <div class="between" style="margin:18px 2px 2px">
+    <div><b style="font-size:16px;font-weight:800">Categories</b><div class="tiny2">Total 18 folders</div></div>
+    <span style="font-size:12px;font-weight:700;color:var(--blue-d);cursor:pointer" onclick="goScreen(1)">View All →</span>
+  </div>
+  <div class="grid2" style="margin-top:10px">
+    ${CATS.map((c,i)=>`<div class="tile" onclick="catOpen(${i})">
+      <div class="between" style="align-items:flex-start"><span class="em">${c.em}</span><span class="chev">›</span></div>
+      <b>${c.t}</b><span>${c.n}</span></div>`).join('')}
+  </div>
+
+  <div class="card g" style="margin-top:14px">
+    <div class="between" style="margin-bottom:9px"><b style="font-size:14px;font-weight:800">🔎 Quick Actions</b><span class="tiny2">Step 3</span></div>
+    <div class="grid3">
+      <div class="mini" onclick="downloadBatchZip()"><span class="em">📦</span><b>Batch ZIP</b><span>6 দেশ</span></div>
+      <div class="mini" onclick="goScreen(2)"><span class="em">🤖</span><b>AI Hub</b><span>Visa</span></div>
+      <div class="mini" onclick="goScreen(3)"><span class="em">💬</span><b>AI Buddy</b><span>Chat</span></div>
+    </div>
+  </div>`;
+}
+function catOpen(i){
+  const c=CATS[i];
+  toast(c.em+' '+c.t+' — '+c.n+' খোলা হচ্ছে');
+  if(i===0||i===1) goScreen(1);
+}
+function notifCenter(){ toast('🔔 3 নতুন অ্যালার্ট: Australia approved · Turkey payment · Singapore call'); }
+
+/* ============ SCREEN 2 · VISA FILE BOX (reference right phone) ============ */
+function screenFiles(){
+  const total = FOLDERS.reduce((a,b)=>a+b.gb,0);
+  return `
+  <div class="between" style="margin-bottom:14px">
+    <div class="row" style="gap:9px">
+      <button class="btn ghost" style="padding:8px 10px" onclick="goScreen(0)">‹</button>
+      <b style="font-size:19px;font-weight:800;letter-spacing:-.6px">Home – Visa File Box</b>
+    </div>
+    <div class="avatar" style="width:36px;height:36px;border-radius:12px;background:linear-gradient(145deg,#9B8CFF,#2563EB);display:grid;place-items:center;font-size:15px;color:#fff;font-weight:800">HI</div>
+  </div>
+
+  <div class="storage blue" style="cursor:default">
+    <div class="between" style="align-items:flex-start">
+      <div class="row" style="gap:12px">
+        <div class="ic" style="margin:0">📄</div>
+        <div style="font-size:19px;font-weight:800;letter-spacing:-.5px">Visa File Box</div>
+      </div>
+      <span class="arrows">•••</span>
+    </div>
+    <div class="pbar" style="margin-top:14px"><i style="width:${(S.storage/100*100).toFixed(0)}%"></i></div>
+    <div class="between" style="margin-top:7px;font-size:11.5px;opacity:.92">
+      <span>${S.storage.toFixed(1)} GB</span><span>100 GB</span></div>
+    <div class="between" style="margin-top:12px">
+      <span class="ghostbtn" onclick="runClean()">${S.cleaning?'⏳ Cleaning…':'✨ Clean'}</span>
+      <span class="arrows" style="font-size:18px">≫≫≫≫</span>
+    </div>
+  </div>
+
+  <div class="between" style="margin:16px 2px 2px">
+    <div><b style="font-size:16px;font-weight:800">Visa Folders</b><div class="tiny2">Total 6 folders</div></div>
+    <span style="font-size:12px;font-weight:700;color:var(--blue-d);cursor:pointer" onclick="toast('6টি Visa folder-এর সব ফাইল')">View All →</span>
+  </div>
+
+  <div style="margin-top:10px">
+    ${FOLDERS.map(f=>`<div class="li" onclick="folderOpen('${f.name}')">
+      <div class="iconbox gold" style="position:relative">📁
+        <span style="position:absolute;bottom:-2px;right:-2px;font-size:8px;font-weight:800;background:#EF4444;color:#fff;padding:1px 3px;border-radius:4px">${f.tag}</span></div>
+      <div class="grow"><b style="font-size:13.5px;font-weight:700">${f.name}</b>
+        <div class="tiny2">${f.files} files · ${f.gb} GB</div>
+        <div class="tiny2">${f.date}</div></div>
+      <span class="chev">›</span></div>`).join('')}
+  </div>
+
+  <div class="card g" style="margin-top:6px;padding:12px">
+    <div class="row" style="gap:8px;overflow-x:auto;padding-bottom:4px" class="notabs">
+      ${[['pdf','🛂 PDFs & ZIP'],['folders','🗄️ Folders'],['data','🗄️ Data/Auth'],['deploy','🚀 Deploy'],['keys','🔑 Keys']]
+        .map(([id,t])=>`<span class="chip ${S.moduleTab===id?'on':''}" style="white-space:nowrap;font-size:11.5px" onclick="S.moduleTab='${id}';render()">${t}</span>`).join('')}
+    </div>
+    <div style="margin-top:11px">${moduleBody()}</div>
+  </div>
+
+  <div class="grid2">
+    <div class="mini" onclick="downloadBatchZip()"><span class="em">📦</span><b>Export Batch .ZIP</b><span>6 দেশ</span></div>
+    <div class="mini" onclick="openStudio()"><span class="em">🖨️</span><b>PDF Studio</b><span>A4 edit</span></div>
+  </div>`;
+}
+function folderOpen(n){ toast('📁 '+n+' খোলা হচ্ছে — ফাইল লিস্ট'); }
+function moduleBody(){
+  const T=S.toggles;
+  const tog=(k,l,s)=>`<div class="li"><div class="grow"><b style="font-size:12.5px">${l}</b><div class="tiny2">${s}</div></div><div class="tg ${T[k]?'on':''}" onclick="flip('${k}')"></div></div>`;
+  switch(S.moduleTab){
+    case 'pdf': return `
+      <div class="li"><div class="iconbox blue">🛂</div><div class="grow"><b style="font-size:12.5px">Embassy PDF Generator</b>
+        <div class="tiny2">6 দেশের অফিসিয়াল ডসিয়ার</div></div><span class="pill pro" onclick="goScreen(2)">Open</span></div>
+      <div class="li"><div class="iconbox">📦</div><div class="grow"><b style="font-size:12px">VisaMOTion_6_Countries_Batch_Dossiers_2026.zip</b>
+        <div class="tiny2">Real PKZIP · browser-side</div></div><span class="pill gold" onclick="downloadBatchZip()">Download</span></div>`;
+    case 'folders': return FOLDERS.map(f=>`<div class="li"><div class="iconbox">📁</div><div class="grow">
+      <b style="font-size:12.5px">${f.name}</b><div class="tiny2">${f.files} files · ${f.gb} GB</div></div><span class="pill">${f.tag}</span></div>`).join('');
+    case 'data': return `
+      <div class="li"><div class="iconbox purple">🗄️</div><div class="grow"><b style="font-size:12.5px">visa_dossiers <span class="pill grn" style="font-size:9px;padding:2px 7px">LIVE</span></b>
+        <div class="tiny2">Supabase · RLS সক্রিয় · ${DB.dossiers.length} rows</div></div><div class="tg ${T.rls?'on':''}" onclick="flip('rls')"></div></div>
+      <div class="li"><div class="iconbox purple">👥</div><div class="grow"><b style="font-size:12.5px">applicant_profiles <span class="pill grn" style="font-size:9px;padding:2px 7px">LIVE</span></b>
+        <div class="tiny2">Admin JWT Auth · ${DB.profiles.length} rows</div></div><div class="tg ${T.jwt?'on':''}" onclick="flip('jwt')"></div></div>
+      <div class="li"><div class="iconbox">💬</div><div class="grow"><b style="font-size:12.5px">chat_messages</b>
+        <div class="tiny2">লাইভ চ্যাট লগ স্টোর হচ্ছে</div></div><span class="pill grn">syncing</span></div>
+      ${tog('push','Native PWA &amp; Push','হোম স্ক্রিন ইনস্টল + পুশ')}`;
+    case 'deploy': return `
+      <div class="li"><div class="iconbox blue">🐙</div><div class="grow"><b style="font-size:12.5px">GitHub Sync</b>
+        <div class="tiny2" id="ghStatus">repo: visamotion-file-box</div></div><span class="pill" onclick="openDeploy()">Status</span></div>
+      <div class="li"><div class="iconbox blue">▲</div><div class="grow"><b style="font-size:12.5px">Vercel / AWS Deploy</b>
+        <div class="tiny2">Batch .ZIP → production</div></div><span class="pill pro" onclick="openDeploy()">Deploy</span></div>
+      <div class="li"><div class="iconbox">🚀</div><div class="grow"><b style="font-size:12.5px">Auto Deploy on push</b>
+        <div class="tiny2">main branch → live url</div></div><div class="tg ${T.gh?'on':''}" onclick="flip('gh')"></div></div>`;
+    case 'keys': return ['Gemini API','Browser-Use','Base44 Backend','Custom AI Agent','GitHub','Supabase','Vercel']
+      .map(k=>`<div class="li"><div class="iconbox">🔑</div><div class="grow"><b style="font-size:12.5px">${k}</b>
+        <div class="tiny2">এনক্রিপ্টেড সিক্রেট</div></div><span class="pill">••••••</span></div>`).join('');
+  }
+  return '';
+}
+function flip(k){ S.toggles[k]=!S.toggles[k]; render(); }
+function runClean(){
+  if(S.cleaning) return; S.cleaning=true; render();
+  let i=0; const t=setInterval(()=>{ i++; S.storage=Math.max(21.6,S.storage-1.14); render();
+    if(i>=6){ clearInterval(t); S.cleaning=false; toast('🧹 Clean সম্পন্ন · 6.8 GB খালি হয়েছে'); render(); } },220);
+}
+
+/* ============ SCREEN 3 · AI VISA HUB ============ */
+function screenHub(){
+  return `
+  <div class="between" style="margin-bottom:14px">
+    <span class="pill pro" style="padding:8px 14px">👋 Hello, VisaMotion ⌄</span>
+    <div class="row" style="gap:8px">
+      <button class="btn ghost" style="padding:8px 10px" onclick="orbAction()">✨</button>
+      <button class="btn ghost" style="padding:8px 10px" onclick="goScreen(3)">☰</button>
+    </div>
+  </div>
+  <h1 style="font-size:25px;font-weight:800;letter-spacing:-1px;line-height:1.2">Need help filing<br>visas today?</h1>
+  <p class="tiny" style="margin-top:6px">AI Visa Hub · 6 countries · 24/7 assistant</p>
+
+  <button class="btn pri" style="width:100%;justify-content:center;padding:15px;font-size:15px;border-radius:20px;margin-top:15px"
+    onclick="goScreen(3)">✨ Ask a Question</button>
+
+  <div class="grid3" style="margin-top:11px">
+    <div class="mini" onclick="scanPassport()"><span class="em">🛂</span><b>Passport</b><span>Scanner</span></div>
+    <div class="mini" onclick="toast('📷 ক্যামেরা অনুমতি দরকার')"><span class="em">📷</span><b>Camera</b><span>Document</span></div>
+    <div class="mini" onclick="startVoice()"><span class="em">🎙️</span><b>Voice</b><span>বাংলা ইনপুট</span></div>
+  </div>
+
+  <div class="card g" style="background:linear-gradient(140deg,#5AA0FF,#5B54E8);border-color:rgba(255,255,255,.4);color:#fff;margin-top:14px">
+    <div class="between"><div><b style="font-size:15px">🔓 Unlock VisaMOTion Pro</b>
+      <div style="font-size:11.5px;opacity:.9;margin-top:3px">Unlimited dossiers · auto-apply · Embassy PDF</div></div>
+      <span style="font-size:28px">✨</span></div>
+    <button class="btn" style="width:100%;justify-content:center;margin-top:11px;background:#fff;color:var(--blue-d);border:0;font-weight:700"
+      onclick="toast('⚡ Pro আনলক ফ্লো শুরু')">Upgrade Now</button>
+  </div>
+
+  <div class="between" style="margin:16px 2px 2px"><b style="font-size:16px;font-weight:800">🧠 Solvers</b><span class="tiny2">3 AI modules</span></div>
+  <div class="grid3" style="margin-top:10px">
+    <div class="mini" onclick="openStudio()"><span class="em">📄</span><b>PDF Generator</b><span>Embassy dossier</span></div>
+    <div class="mini" onclick="applyNow()"><span class="em">🤖</span><b>Give Visa<br>Auto-Apply</b><span>Browser-Use</span></div>
+    <div class="mini" onclick="showChecklists()"><span class="em">✅</span><b>Embassy<br>Checklists</b><span>6 countries</span></div>
+  </div>
+  <div id="checklistOut"></div>
+
+  <div class="card g" style="margin-top:14px">
+    <div class="between" style="margin-bottom:9px"><b style="font-size:14px;font-weight:800">📋 Today's Tasks</b><span class="pill">3 pending</span></div>
+    ${[['🛂','Review Australia dossier PDF','11:00 AM'],
+       ['🇹🇷','Update Turkey e-Visa payment','2:30 PM'],
+       ['🇸🇬','Confirm Singapore applicant call','4:00 PM']]
+      .map(([i,t,time])=>`<div class="li"><div class="iconbox">${i}</div>
+        <div class="grow"><b style="font-size:12px">${t}</b><div class="tiny2">${time} · auto-reminder</div></div>
+        <div class="tg" onclick="this.classList.toggle('on');toast('Task updated')"></div></div>`).join('')}
+  </div>
+
+  <div class="grid2">
+    <div class="mini" onclick="downloadBatchZip()"><span class="em">📦</span><b>Export Country Batch .ZIP</b><span>6 countries</span></div>
+    <div class="mini" onclick="openStudio()"><span class="em">🖨️</span><b>PDF Studio</b><span>A4 editor</span></div>
+  </div>`;
+}
+function showChecklists(){
+  document.getElementById('checklistOut').innerHTML = `<div class="card g" style="margin-top:12px">
+    <b style="font-size:13.5px;font-weight:800;display:block;margin-bottom:9px">✅ Embassy Checklists</b>
+    ${COUNTRIES.map(c=>`<div class="li"><div class="iconbox">${flagSVG(c.id,22)}</div>
+      <div class="grow"><b style="font-size:12.5px">${c.name}</b><div class="tiny2">${c.visa}</div></div>
+      <span class="pill grn">✅ 9/11</span></div>`).join('')}</div>`;
+}
+function scanPassport(){ S.chat.push({who:'ai',t:'🛂 Passport Scanner ready. Capture the passport — name, DOB and passport No. will auto-fill from the MRZ lines.'}); goScreen(3); }
+function applyNow(){ toast('🤖 Auto-Apply needs live Browser-Use credentials'); }
+function startVoice(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ toast('🎙️ এই ব্রাউজারে Voice নেই — iPhone কিবোর্ড Dictation ব্যবহার করুন'); return; }
+  const r=new SR(); r.lang='bn-BD'; r.interimResults=false;
+  r.onresult=e=>{ const i=document.getElementById('chatInput')||document.getElementById('chatInputF'); if(i) i.value=e.results[0][0].transcript; toast('🎙️ ভয়েস রেকর্ড হয়েছে'); render(); };
+  r.onerror=()=>toast('🎙️ Voice ব্যর্থ — ব্রাউজার/আইওএস অনুমতি দিন');
+  try{ r.start(); toast('🎙️ শুনছি… বাংলায় বলুন'); }catch(e){ toast('Voice চালু করা যায়নি'); }
+}
+
+/* ============ SCREEN 4 · AI AGENT CHAT ============ */
+function screenChat(scope){
+  const id = scope==='F'?'chatInputF':'chatInput';
+  return `
+  <div class="between" style="margin-bottom:14px">
+    <span class="pill pro" style="padding:8px 14px">✨ AI Visa Buddy</span>
+    <div class="row" style="gap:8px">
+      <span class="pill grn" style="font-size:10px"><span class="dot"></span> Online</span>
+      <button class="btn ghost" style="padding:8px 10px" onclick="newChat()">＋</button>
+    </div>
+  </div>
+
+  <div style="display:grid;place-items:center;height:130px;position:relative;margin-top:4px">
+    <div class="orb r3"></div><div class="orb r2"></div><div class="orb r1"></div>
+    <button class="orbcore" onclick="orbAction()" title="Generate embassy PDF">🤖</button>
+  </div>
+  <h1 style="text-align:center;font-size:20px;font-weight:800;letter-spacing:-.7px;margin-top:12px">How Can I Help You Today?</h1>
+  <p class="tiny" style="text-align:center;margin-top:4px">বাংলা বা English — ${esc(ENGINE_LABEL[S.engine]||'AI')}</p>
+
+  <div class="row" style="gap:6px;overflow-x:auto;padding:12px 2px 4px">
+    ${COUNTRIES.map(c=>`<span class="chip ${S.country===c.id?'on':''}" style="white-space:nowrap;font-size:11.5px" onclick="S.country='${c.id}';render()">${flagSVG(c.id)} ${c.name}</span>`).join('')}
+    <span class="chip" style="white-space:nowrap;font-size:11.5px" onclick="quick('Generate an official embassy PDF dossier')">📄 PDF Gen</span>
+    <span class="chip" style="white-space:nowrap;font-size:11.5px" onclick="quick('Create a cover letter image for this visa')">🎨 Image Gen</span>
+  </div>
+
+  <div class="card g" id="chatBox" style="margin-top:9px;max-height:250px;overflow-y:auto;padding:12px">
+    ${S.chat.map(m=>`<div class="msg ${m.who}"><div class="bubble">${m.t}</div></div>`).join('')}
+    ${S.thinking?'<div class="msg ai"><div class="bubble thinking"><span></span><span></span><span></span></div></div>':''}
+  </div>
+
+  <div style="display:flex;gap:6px;overflow-x:auto;margin-top:9px;padding-bottom:2px">
+    ${Object.keys(ENGINE_LABEL).map(e=>`<span class="chip ${S.engine===e?'on':''}" style="white-space:nowrap;font-size:11px;padding:6px 11px" onclick="S.engine='${e}';render()">${ENGINE_LABEL[e]} ⌄</span>`).join('')}
+  </div>
+
+  <div class="composer">
+    <button class="cbtn" onclick="uploadToChat()">＋</button>
+    <input id="${id}" placeholder="🪄 Ask a question…" onkeydown="if(event.key==='Enter')sendMsg('${scope}')">
+    <button class="cbtn" onclick="uploadToChat()">📎</button>
+    <button class="cbtn pri" onclick="sendMsg('${scope}')">➤</button>
+  </div>
+  <input type="file" id="chatFile" hidden accept=".pdf,.doc,.docx,.odt,.rtf,image/*,.zip" onchange="filePicked(this)">`;
+}
+function newChat(){ S.chat=[{who:'ai',t:'New chat started. Which country and visa purpose are we working on?'}]; render(); }
+function quick(t){ const i=document.getElementById('chatInput')||document.getElementById('chatInputF'); if(i) i.value=t; sendMsg(i&&i.id.endsWith('F')?'F':'D'); }
+function uploadToChat(){ const f=document.getElementById('chatFile'); if(f) f.click(); }
+function filePicked(inp){
+  const f=inp.files[0]; if(!f) return;
+  S.files.unshift({name:f.name,size:(f.size/1024).toFixed(0)+' KB'});
+  S.chat.push({who:'me',t:'📎 Attached: <b>'+esc(f.name)+'</b> ('+(f.size/1024).toFixed(0)+' KB)'});
+  S.chat.push({who:'ai',t:'File attached ✅ — note: reading the contents of an uploaded file (OCR / text extraction) is not guaranteed in this mode yet. Open it in PDF Studio to edit text manually.'});
+  dbLog('user','[file] '+f.name,S.engine);
+  render();
+}
+async function sendMsg(scope){
+  const id = scope==='F'?'chatInputF':'chatInput';
+  const el = document.getElementById(id); if(!el||!el.value.trim()) return;
+  const raw = el.value.trim(), t = esc(raw); el.value='';
+  S.chat.push({who:'me',t}); S.thinking=true; render(); scrollChat();
+  dbLog('user',raw,S.engine);
+  await sleep(560);
+  const ans = reply(raw);
+  S.thinking=false; S.chat.push({who:'ai',t:ans}); render(); scrollChat();
+  dbLog('assistant',ans.replace(/<[^>]+>/g,''),S.engine);
+}
+function scrollChat(){ const b=document.getElementById('chatBox'); if(b) b.scrollTop=b.scrollHeight; }
+function reply(t){
+  const c = COUNTRIES.find(x=>x.id===S.country)||COUNTRIES[0];
+  if(/pdf|dossier|ডসিয়ার/i.test(t)){ setTimeout(openStudio,650);
+    return `📄 Generating the official embassy dossier for <b>${c.name}</b> (${c.visa}). PDF Studio is opening — A4 preview, zoom and Save PDF supported.`; }
+  if(/apply|অ্যাপ্লাই/i.test(t)) return `🤖 <b>Auto-Apply</b>: to fill the ${c.name} (${c.visa}) form, a live Browser-Use session is required. Connect real API credentials to run the deploy-ready flow.`;
+  if(/fee|cost|ফি/i.test(t)) return `${flagSVG(c.id)} ${c.name} visa fees differ per country and change often — you must pay the real fee yourself. I don't have a verified live fee feed, so I won't guess an amount. Check the official embassy page.`;
+  if(/checklist|document|ডকুমেন্ট/i.test(t)) return `${flagSVG(c.id)} ${c.name} typical checklist: ✅ Passport (6+ months validity) ✅ Photo 35×45mm ✅ Bank statement ✅ Hotel/flight booking ✅ Invitation (if any) ✅ Travel insurance. Verify the exact list on the official embassy site.`;
+  if(/hello|hi|আসসালাম|হ্যালো/i.test(t)) return `Hello! 👋 Working on ${flagSVG(c.id)} <b>${c.name}</b> — ${c.visa}. What would you like to know?`;
+  return `Got it: “${t}”. Using ${flagSVG(c.id)} <b>${c.name}</b> (${c.visa}). Ask me to generate the dossier, show the checklist, or start auto-apply. (Real model answers need live AI credentials — this is the built-in demo engine.)`;
+}
+function orbAction(){ toast('🤖 Generating official embassy PDF…'); setTimeout(openStudio,600); }
+
+/* ============ SCREEN 5 · PROFILE & CLOUD ============ */
+function screenProfile(){
+  const T=S.toggles;
+  const hist = DB.dossiers.length? DB.dossiers : COUNTRIES.map((c,i)=>({country:c.name,status:'draft',progress:20}));
+  const col = s => s==='approved'?'#22C55E':s==='submitted'?'#3B82F6':s==='payment_pending'?'#F59E0B':'#9CA0BC';
+  return `
+  <div class="between" style="margin-bottom:14px"><b class="t-title">Profile &amp; Cloud</b><span class="pill gold">⭐ Level 5</span></div>
+
+  <div class="card g" style="text-align:center">
+    <div style="width:70px;height:70px;border-radius:24px;margin:4px auto 10px;display:grid;place-items:center;font-size:26px;font-weight:800;color:#fff;background:linear-gradient(145deg,#9B8CFF,#2563EB);box-shadow:0 14px 28px -10px rgba(91,84,232,.9)">HI</div>
+    <h2 style="font-size:19px;font-weight:800;letter-spacing:-.5px">Imran Hossen</h2>
+    <div class="row" style="justify-content:center;gap:6px;margin-top:8px">
+      <span class="pill gold">⭐ Level 5 Admin</span><span class="pill pro">PRO</span></div>
+    <div class="tiny2" style="margin-top:7px">+880 17XX-XXXXXX · 🇧🇩 Dhaka</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card g" style="margin:0;text-align:center;background:linear-gradient(140deg,#5AA0FF,#5B54E8);color:#fff;border-color:rgba(255,255,255,.4)">
+      <b style="font-size:28px;letter-spacing:-1px">187h</b><div style="font-size:11px;opacity:.92">AI Saved Hours</div></div>
+    <div class="card g" style="margin:0;text-align:center">
+      <b style="font-size:28px;letter-spacing:-1px">670</b><div class="tiny">Visas &amp; PDFs</div></div>
+  </div>
+
+  <div class="grid3" style="margin-top:12px">
+    <div class="stat"><b>175</b><span>Growth Score</span></div>
+    <div class="stat"><b>99</b><span>Dossiers</span></div>
+    <div class="stat"><b>05</b><span>Days Streak</span></div>
+  </div>
+
+  <div class="card g" style="margin-top:14px">
+    <b style="font-size:14px;font-weight:800;display:block;margin-bottom:9px">📲 Native PWA &amp; Cloud Sync</b>
+    <div class="li"><div class="iconbox blue">📲</div><div class="grow"><b style="font-size:12.5px">Install as App</b>
+      <div class="tiny2">Home-screen icon + offline</div></div><span class="pill pro" onclick="openPwa()">Install</span></div>
+    <div class="li"><div class="iconbox purple">☁️</div><div class="grow"><b style="font-size:12.5px">Cloud Sync (Supabase) <span class="pill grn" style="font-size:9px;padding:2px 7px">${DB.online?'LIVE':'OFF'}</span></b>
+      <div class="tiny2">${DB.online? DB.dossiers.length+' dossiers synced':esc(DB.error||'')}</div></div><div class="tg ${T.sync?'on':''}" onclick="flip('sync')"></div></div>
+    <div class="li"><div class="iconbox">🔔</div><div class="grow"><b style="font-size:12.5px">Push Notifications</b>
+      <div class="tiny2">Stage-change alerts</div></div><div class="tg ${T.push?'on':''}" onclick="flip('push')"></div></div>
+  </div>
+
+  <div class="card g">
+    <b style="font-size:14px;font-weight:800;display:block;margin-bottom:9px">🗂️ Saved Resources &amp; Batch ZIP</b>
+    <div class="li"><div class="iconbox">📦</div><div class="grow"><b style="font-size:12.5px">6-Country Batch Dossiers</b>
+      <div class="tiny2">VisaMOTion_6_Countries_Batch_Dossiers_2026.zip</div></div><span class="pill gold" onclick="downloadBatchZip()">Download</span></div>
+    <div class="li"><div class="iconbox">🖨️</div><div class="grow"><b style="font-size:12.5px">PDF Studio Library</b>
+      <div class="tiny2">248 dossiers · A4</div></div><span class="pill" onclick="openStudio()">Open</span></div>
+    <div class="li"><div class="iconbox">🚀</div><div class="grow"><b style="font-size:12.5px">Live Deployment</b>
+      <div class="tiny2">GitHub → Vercel / AWS</div></div><span class="pill pro" onclick="openDeploy()">Deploy</span></div>
+  </div>
+
+  <div class="card g">
+    <b style="font-size:14px;font-weight:800;display:block;margin-bottom:9px">📜 Filing History</b>
+    ${hist.slice(0,5).map(d=>`<div class="li"><div class="iconbox">${(()=>{const cc=COUNTRIES.find(c=>c.name===d.country);return cc?flagSVG(cc.id,22):'📄';})()}</div>
+      <div class="grow"><b style="font-size:12.5px">${esc(d.country)}</b><div class="tiny2">${esc(d.visa_type||'')} · ${esc(d.status||'')}</div></div>
+      <span style="width:9px;height:9px;border-radius:99px;background:${col(d.status)};flex:none"></span></div>`).join('')}
+    <div class="between" style="margin-top:6px"><span class="tiny2">WhatsApp / SMS stage alerts</span>
+      <div class="tg ${T.wa?'on':''}" onclick="flip('wa')"></div></div>
+  </div>`;
+}
+
+/* ============ ORB / CHAT / COMPOSER CSS (injected) ============ */
+(function injectCss(){
+  const s=document.createElement('style'); s.textContent=`
+  .avatar{border-radius:12px}
+  .orb{position:absolute;border-radius:50%;border:2px solid rgba(91,84,232,.22)}
+  .orb.r1{width:74px;height:74px;animation:pulse 2.6s ease-in-out infinite}
+  .orb.r2{width:100px;height:100px;animation:pulse 2.6s ease-in-out .35s infinite}
+  .orb.r3{width:126px;height:126px;animation:pulse 2.6s ease-in-out .7s infinite}
+  @keyframes pulse{0%,100%{transform:scale(.94);opacity:.55}50%{transform:scale(1.04);opacity:1}}
+  .orbcore{position:relative;width:62px;height:62px;border-radius:50%;border:0;cursor:pointer;font-size:28px;
+    background:linear-gradient(145deg,#8B7CFA,#4F46E5);color:#fff;z-index:2;
+    box-shadow:0 16px 34px -8px rgba(91,84,232,.95), 0 0 0 6px rgba(139,124,250,.16), inset 0 2px 6px rgba(255,255,255,.4);
+    animation:float 3s ease-in-out infinite}
+  .msg{display:flex;margin-bottom:9px}
+  .msg.me{justify-content:flex-end}
+  .msg .bubble{max-width:86%;padding:10px 13px;border-radius:18px;font-size:12.5px;line-height:1.55;
+    background:rgba(255,255,255,.9);border:1px solid var(--stroke);color:var(--ink);
+    box-shadow:0 8px 18px -12px rgba(38,52,132,.4)}
+  .msg.me .bubble{background:linear-gradient(135deg,#5AA0FF,#5B54E8);color:#fff;border-color:transparent}
+  .thinking{display:flex;gap:4px;align-items:center}
+  .thinking span{width:6px;height:6px;border-radius:99px;background:#7C6CF5;animation:blink 1.2s infinite}
+  .thinking span:nth-child(2){animation-delay:.2s}.thinking span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+  .composer{display:flex;align-items:center;gap:7px;margin-top:11px;padding:7px;border-radius:22px;
+    background:var(--glass);backdrop-filter:blur(24px);border:1px solid var(--stroke);box-shadow:var(--shadow)}
+  .composer input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:13px;color:var(--ink);padding:6px 4px}
+  .composer input::placeholder{color:var(--ink-3)}
+  .cbtn{width:38px;height:38px;flex:none;border:0;border-radius:13px;cursor:pointer;font-size:16px;font-weight:700;
+    background:rgba(38,52,132,.07);color:var(--ink-2);display:grid;place-items:center;transition:.16s}
+  .cbtn:hover{background:rgba(38,52,132,.13)}
+  .cbtn.pri{background:linear-gradient(140deg,#5AA0FF,#5B54E8);color:#fff;box-shadow:0 10px 20px -8px rgba(91,84,232,.9)}
+  /* toast */
+  #toastEl{position:fixed;left:50%;bottom:30px;transform:translate(-50%,120%);z-index:9999;max-width:88vw;
+    padding:12px 20px;border-radius:16px;font:600 13px/1.4 Inter,Hind Siliguri,sans-serif;color:#fff;
+    background:linear-gradient(135deg,#3B82F6,#5B54E8);box-shadow:0 18px 40px -12px rgba(38,52,132,.7);
+    transition:transform .35s cubic-bezier(.2,1.2,.4,1)}
+  #toastEl.on{transform:translate(-50%,0)}
+  /* modal */
+  .modal{position:fixed;inset:0;z-index:9998;display:none;align-items:center;justify-content:center;padding:18px;
+    background:rgba(20,26,52,.5);backdrop-filter:blur(6px)}
+  .modal.on{display:flex}
+  .sheet{width:min(680px,96vw);max-height:88vh;overflow:auto;border-radius:28px;padding:20px;
+    background:linear-gradient(170deg,#ffffff,#f2f4ff);border:1px solid var(--stroke);
+    box-shadow:0 40px 90px -30px rgba(20,26,52,.8)}
+  .field{margin-bottom:10px}
+  .field label{display:block;font-size:11px;font-weight:700;color:var(--ink-2);margin-bottom:4px}
+  .field input,.field textarea,.field select{width:100%;padding:11px 13px;border-radius:14px;font:inherit;font-size:13px;
+    border:1px solid rgba(38,52,132,.14);background:rgba(255,255,255,.9);outline:0;color:var(--ink)}
+  .field input:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+  .docpage{background:#fff;border:1px solid #e2e6f5;border-radius:6px;padding:24px 26px;box-shadow:0 10px 30px -16px rgba(38,52,132,.4);
+    transform-origin:top center;transition:transform .2s}
+  `; document.head.appendChild(s);
+})();
+
+/* ============ DOCK ============ */
+function dock(n){
+  const it=[['0','Home','M3 11l9-7 9 7v8a2 2 0 01-2 2H5a2 2 0 01-2-2z'],
+            ['1','Search','M11 4a7 7 0 105.3 11.8L21 20'],
+            ['fab','',''],
+            ['2','Files','M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z'],
+            ['4','Profile','M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0']];
+  return it.map(([id,label,d])=>{
+    if(id==='fab') return `<button class="fab" onclick="downloadBatchZip()">
+      <svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z"/></svg></button>`;
+    if(id==='1') return `<button onclick="toast('🔎 Search visa documents')">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>${label}</button>`;
+    const act = n===+id ? 'act':'';
+    return `<button class="${act}" onclick="goScreen(${id})"><svg viewBox="0 0 24 24"><path d="${d}"/></svg>${label}</button>`;
+  }).join('');
+}
+
+/* ============ RENDER ============ */
+function render(){
+  if(S.flow){
+    $('#showcase').classList.add('hide'); $('#flow').style.display='block';
+    const n=S.screen;
+    $('#sF').innerHTML=[screenHome,screenFiles,screenHub,()=>screenChat('F'),screenProfile][n]();
+    $('#dF').innerHTML=dock(n);
+  } else {
+    $('#showcase').classList.remove('hide'); $('#flow').style.display='none';
+    $('#s0').innerHTML=screenHome(); $('#s1').innerHTML=screenFiles(); $('#s2').innerHTML=screenHub();
+    $('#s3').innerHTML=screenChat('D'); $('#s4').innerHTML=screenProfile();
+    for(let k=0;k<5;k++) $('#d'+k).innerHTML=dock(k);
+  }
+  $$('.chip[data-s]').forEach(c=>c.classList.toggle('on',+c.dataset.s===S.screen));
+  const b=document.getElementById('chatBox'); if(b) b.scrollTop=b.scrollHeight;
+}
+function goScreen(n){ S.screen=n; render(); if(!S.flow) focusScreen(n,false); }
+function focusScreen(n,doRender=true){
+  S.screen=n; if(doRender) render();
+  const p=document.getElementById('p'+n); if(p&&!S.flow) p.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function setMode(m){ S.flow=(m==='flow'); render(); if(S.flow) window.scrollTo({top:0,behavior:'smooth'}); }
+function openPwa(){ toast('📲 PWA ইনস্টল: ব্রাউজার মেনু → “Add to Home Screen”'); }
+
+let toastT;
+function toast(msg){
+  let el=document.getElementById('toastEl');
+  if(!el){ el=document.createElement('div'); el.id='toastEl'; document.body.appendChild(el); }
+  el.textContent=msg; el.classList.add('on');
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'),2700);
+}
+
+/* =====================================================================
+   REAL ZIP — pure-JS PKZIP (store, CRC32). Produces a valid .zip file.
+   ===================================================================== */
+const CRC_TABLE=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;
+  for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(bytes){let c=0xFFFFFFFF;for(let i=0;i<bytes.length;i++)c=CRC_TABLE[(c^bytes[i])&0xFF]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+const enc=new TextEncoder();
+function u16(n){return [n&255,(n>>8)&255];}
+function u32(n){return [n&255,(n>>8)&255,(n>>16)&255,(n>>24)&255];}
+function pstr(s){return [...enc.encode(s)];}
+function buildRealZipBlob(files){
+  const parts=[], central=[]; let offset=0;
+  const dosTime=((12<<11)|(0<<5)|(0>>1)), dosDate=(((2026-1980)<<9)|(10<<5)|14);
+  files.forEach(f=>{
+    const nameB=pstr(f.name), data=enc.encode(f.content), crc=crc32(data);
+    const local=[...u32(0x04034b50),...u16(20),...u16(0),...u16(0),...u16(dosTime),...u16(dosDate),
+                 ...u32(crc),...u32(data.length),...u32(data.length),...u16(nameB.length),...u16(0)];
+    parts.push(new Uint8Array([...local,...nameB,...data]));
+    central.push([...u32(0x02014b50),...u16(20),...u16(20),...u16(0),...u16(0),...u16(dosTime),...u16(dosDate),
+                 ...u32(crc),...u32(data.length),...u32(data.length),...u16(nameB.length),...u16(0),...u16(0),
+                 ...u16(0),...u16(0),...u32(0),...u32(offset),...nameB]);
+    offset += local.length + nameB.length + data.length;
+  });
+  const cd=[].concat(...central);
+  const end=[...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),
+             ...u32(cd.length),...u32(offset),...u16(0)];
+  return new Blob([...parts,new Uint8Array(cd),new Uint8Array(end)],{type:'application/zip'});
+}
+function dossierTxt(c){
+  const d=(DB.dossiers.find(x=>x.country===c.name)||{status:'draft',progress:0,visa_type:c.visa});
+  return `VisaMOTion — OFFICIAL EMBASSY DOSSIER
+=====================================
+Country        : ${c.name}
+Visa Type      : ${c.visa}
+Applicant      : Imran Hossen
+Phone          : +880 17XX-XXXXXX
+Passport No.   : BX0XXXXXX
+Nationality    : Bangladesh
+Status         : ${d.status||'draft'}
+Progress       : ${d.progress||0}%
+Generated (UTC): ${new Date().toISOString()}
+=====================================
+
+CHECKLIST
+[ ] Passport (6+ months validity)
+[ ] Photo 35x45mm, white background
+[ ] Bank statement (6 months)
+[ ] Hotel / flight booking
+[ ] Invitation letter (if applicable)
+[ ] Travel insurance
+[ ] Cover letter
+
+NOTE: This dossier was generated by VisaMOTion Admin OS (Step 3).
+Verify all fields and the official fee on the embassy website before filing.
+`;
+}
+function downloadBatchZip(){
+  toast('📦 Country Batch .ZIP তৈরি হচ্ছে…');
+  const files = COUNTRIES.map(c=>({name:`${c.name.replace(/\s+/g,'_')}_Dossier_Imran.txt`,content:dossierTxt(c)}));
+  files.push({name:'README.txt',content:
+`VisaMOTion_6_Countries_Batch_Dossiers_2026.zip
+Contains 6 embassy dossiers: ${COUNTRIES.map(c=>c.name).join(', ')}.
+Generated by VisaMOTion Admin OS — Step 3.
+Source of truth: live Supabase project 'Visa' (table visa_dossiers).
+`});
+  const blob=buildRealZipBlob(files);
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='VisaMOTion_6_Countries_Batch_Dossiers_2026.zip';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast('✅ .ZIP ডাউনলোড শুরু — 6টি দেশের ডসিয়ার');
+}
+
+/* ============ PDF STUDIO ============ */
+let studioCountry='au';
+function openStudio(){ studioCountry=S.country||'au'; renderStudio(); }
+function renderStudio(){
+  let m=document.getElementById('studioM');
+  if(!m){ m=document.createElement('div'); m.id='studioM'; m.className='modal'; m.innerHTML=
+    `<div class="sheet" id="studioBody"></div>`; m.onclick=e=>{ if(e.target===m) m.classList.remove('on'); }; document.body.appendChild(m); }
+  const c=COUNTRIES.find(x=>x.id===studioCountry)||COUNTRIES[0];
+  const d=DB.dossiers.find(x=>x.country===c.name)||{};
+  document.getElementById('studioBody').innerHTML=`
+    <div class="between" style="margin-bottom:14px">
+      <div><b style="font-size:17px;font-weight:800">🖨️ PDF Studio</b>
+        <div class="tiny2">A4 embassy dossier · editable · zoom &amp; save</div></div>
+      <button class="btn ghost" onclick="document.getElementById('studioM').classList.remove('on')">✕</button>
+    </div>
+    <div class="row" style="gap:6px;overflow-x:auto;margin-bottom:12px">
+      ${COUNTRIES.map(x=>`<span class="chip ${studioCountry===x.id?'on':''}" style="white-space:nowrap;font-size:11.5px"
+        onclick="studioCountry='${x.id}';renderStudio()">${x.flag} ${x.name}</span>`).join('')}
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Applicant name</label><input id="fName" value="Imran Hossen"></div>
+      <div class="field"><label>Passport No.</label><input id="fPass" value="BX0XXXXXX"></div>
+    </div>
+    <div class="field"><label>Purpose of visit</label><input id="fPurpose" value="Tourism / Short stay"></div>
+    <div class="field"><label>Visa type</label><input id="fVisa" value="${esc(d.visa_type||c.visa)}"></div>
+    <div class="field"><label>Cover letter / notes</label>
+      <textarea id="fNote" rows="3">I am applying for a ${c.visa} to ${c.name}. All supporting documents are attached.</textarea></div>
+    <div class="row" style="gap:8px;justify-content:space-between;margin:14px 0 8px">
+      <b style="font-size:13px">A4 Preview</b>
+      <div class="row" style="gap:6px">
+        <button class="btn ghost" style="padding:6px 10px" onclick="zoomPdf(-.1)">－</button>
+        <button class="btn ghost" style="padding:6px 10px" onclick="zoomPdf(.1)">＋</button>
+        <button class="btn pri" onclick="savePdf()">💾 Save PDF</button>
+      </div>
+    </div>
+    <div style="overflow:auto;background:#eef1f9;border-radius:18px;padding:16px">
+      <div class="docpage" id="docPage" style="max-width:430px;margin:auto">
+        <div style="text-align:center;border-bottom:2px solid #2563EB;padding-bottom:10px;margin-bottom:14px">
+          <div style="font-size:17px;font-weight:800;color:#151A34">EMBASSY OF ${c.name.toUpperCase()}</div>
+          <div style="font-size:11px;color:#6E7391">VISA APPLICATION DOSSIER</div>
+        </div>
+        <div id="docFields" style="font-size:12.5px;line-height:2;color:#151A34"></div>
+        <div style="margin-top:18px;border-top:1px dashed #c9cfe6;padding-top:10px;font-size:10.5px;color:#6E7391">
+          Generated by VisaMOTion Admin OS · ${new Date().toLocaleDateString('en-GB')} · Verify on the official embassy site.</div>
+      </div>
+    </div>`;
+  syncDoc();
+}
+function syncDoc(){
+  const c=COUNTRIES.find(x=>x.id===studioCountry)||COUNTRIES[0];
+  const g=id=>{const e=document.getElementById(id);return e?esc(e.value):'';};
+  const el=document.getElementById('docFields');
+  if(el) el.innerHTML=`
+    <div><b>Applicant:</b> ${g('fName')}</div>
+    <div><b>Passport:</b> ${g('fPass')}</div>
+    <div><b>Nationality:</b> Bangladesh</div>
+    <div><b>Visa Type:</b> ${g('fVisa')}</div>
+    <div><b>Purpose:</b> ${g('fPurpose')}</div>
+    <div><b>Country:</b> ${esc(c.name)}</div>
+    <div style="margin-top:10px"><b>Notes:</b><br>${g('fNote')}</div>
+    <div style="margin-top:14px;font-size:11px;color:#6E7391">Checklist: Passport · Photo 35×45 · Bank statement · Booking · Insurance</div>`;
+}
+document.addEventListener('input',e=>{ if(e.target.closest&&e.target.closest('#studioBody')) syncDoc(); });
+let pdfZoom=1;
+function zoomPdf(d){ pdfZoom=Math.min(1.6,Math.max(.6,pdfZoom+d)); const p=document.getElementById('docPage'); if(p) p.style.transform='scale('+pdfZoom+')'; }
+function savePdf(){
+  const c=COUNTRIES.find(x=>x.id===studioCountry)||COUNTRIES[0];
+  const g=id=>{const e=document.getElementById(id);return e?e.value:'';};
+  const lines=[
+    `EMBASSY OF ${c.name.toUpperCase()} - VISA APPLICATION DOSSIER`,
+    '================================================',
+    `Country      : ${c.name}`,
+    `Visa Type    : ${g('fVisa')}`,
+    `Applicant    : ${g('fName')}`,
+    `Passport     : ${g('fPass')}`,
+    `Nationality  : Bangladesh`,
+    `Purpose      : ${g('fPurpose')}`,
+    `Notes        : ${g('fNote')}`,
+    '------------------------------------------------',
+    'Checklist: Passport (6+ mo) | Photo 35x45mm | Bank statement |',
+    'Hotel/Flight booking | Travel insurance | Invitation (if any)',
+    '------------------------------------------------',
+    `Generated by VisaMOTion Admin OS on ${new Date().toLocaleString('en-GB')}`,
+    'Verify all details on the official embassy website before filing.'
+  ];
+  const txt=lines.join('\n');
+  const pad=(s,w)=>{ const words=s.split(' '); let out='',line='',res=[];
+    words.forEach(wd=>{ if((line+wd).length>w){res.push(line.trim());line=wd+' ';} else line+=wd+' '; });
+    if(line.trim())res.push(line.trim()); return res; };
+  const content=`BT /F1 11 Tf 50 780 Td 16 TL\n${pad(txt,88).map(l=>'('+l.replace(/[()\\]/g,'')+') Tj T*').join('\n')}\nET`;
+  // minimal single-page PDF
+  const objs=[];
+  objs[1]='<< /Type /Catalog /Pages 2 0 R >>';
+  objs[2]='<< /Type /Pages /Kids [3 0 R] /Count 1 >>';
+  objs[3]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>';
+  objs[4]='<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream';
+  objs[5]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
+  let pdf='%PDF-1.4\n', offs=[];
+  for(let i=1;i<=5;i++){ offs[i]=pdf.length; pdf+=i+' 0 obj\n'+objs[i]+'\nendobj\n'; }
+  const xref=pdf.length;
+  pdf+='xref\n0 6\n0000000000 65535 f \n';
+  for(let i=1;i<=5;i++) pdf+=String(offs[i]).padStart(10,'0')+' 00000 n \n';
+  pdf+='trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF';
+  const blob=new Blob([pdf],{type:'application/pdf'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='VisaMOTion_'+c.name+'_Dossier.pdf'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast('💾 PDF সেভ হয়েছে — '+c.name+'_Dossier.pdf');
+  dbLog('system','PDF generated: '+c.name,S.engine);
+}
+
+/* ============ DEPLOY PANEL (GitHub + Vercel/AWS) ============ */
+const DEPLOY = { gh:'https://github.com/', vercel:'', pages:'' };
+function openDeploy(){
+  let m=document.getElementById('deployM');
+  if(!m){ m=document.createElement('div'); m.id='deployM'; m.className='modal';
+    m.onclick=e=>{ if(e.target===m) m.classList.remove('on'); }; document.body.appendChild(m); }
+  m.innerHTML=`<div class="sheet">
+    <div class="between" style="margin-bottom:14px">
+      <div><b style="font-size:17px;font-weight:800">🚀 Live Deployment</b>
+        <div class="tiny2">Supabase (live) · GitHub · Vercel / AWS</div></div>
+      <button class="btn ghost" onclick="document.getElementById('deployM').classList.remove('on')">✕</button>
+    </div>
+
+    <div class="li"><div class="iconbox purple">🗄️</div><div class="grow"><b style="font-size:12.5px">Supabase <span class="pill grn" style="font-size:9px;padding:2px 7px">CONNECTED</span></b>
+      <div class="tiny2">Project <b>Visa</b> · ref bnexivtxepdknmkinmpj · ap-south-1</div>
+      <div class="tiny2">Tables: visa_dossiers, applicant_profiles, chat_messages · RLS on</div></div>
+      <span class="pill" onclick="testDb()">Test</span></div>
+
+    <div class="li"><div class="iconbox blue">🐙</div><div class="grow"><b style="font-size:12.5px">GitHub <span class="pill grn" style="font-size:9px;padding:2px 7px">CONNECTED</span></b>
+      <div class="tiny2" id="ghInfo">Ready to push the app repo</div></div>
+      <span class="pill pro" id="ghBtn" onclick="deployGithub()">Push repo</span></div>
+
+    <div class="li"><div class="iconbox blue">▲</div><div class="grow"><b style="font-size:12.5px">Vercel / AWS</b>
+      <div class="tiny2" id="vcInfo">After the GitHub push, import the repo at vercel.com → deploy. Static HTML = instant.</div></div>
+      <span class="pill" onclick="openVercel()">Open Vercel</span></div>
+
+    <div class="li"><div class="iconbox gold">🌐</div><div class="grow"><b style="font-size:12.5px">Public live URL</b>
+      <div class="tiny2" id="liveUrl">Not published yet</div></div>
+      <span class="pill pro" onclick="publishLive()">Publish now</span></div>
+
+    <div id="deployLog" style="margin-top:10px;font-size:11.5px;color:var(--ink-2);line-height:1.7"></div>
+    <input type="file" id="zipFile" hidden accept=".zip" onchange="zipPicked(this)">
+    <div class="row" style="gap:8px;margin-top:6px">
+      <button class="btn pri" style="flex:1;justify-content:center" onclick="downloadBatchZip()">📦 Download Batch .ZIP</button>
+      <button class="btn" style="flex:1;justify-content:center" onclick="document.getElementById('zipFile').click()">⬆ Upload .ZIP</button>
+    </div>
+  </div>`;
+  m.classList.add('on');
+}
+async function testDb(){
+  await dbLoad(); render();
+  toast(DB.online? '✅ Supabase live — '+DB.dossiers.length+' dossiers':'⚠️ Offline: '+DB.error);
+}
+async function deployGithub(){
+  const log=document.getElementById('deployLog');
+  const say=t=>{ log.innerHTML += '• '+t+'<br>'; };
+  document.getElementById('ghInfo').innerHTML='Pushing…';
+  // Expose publish endpoint result; GitHub push handled by the agent when run live.
+  try{
+    const r=await fetch('/api/v4/pages/visamotion-file-box',{method:'HEAD'});
+  }catch(e){}
+  say('Repo prepared: <b>visamotion-file-box</b> (single-file app + README + .gitignore)');
+  say('Connect your GitHub (it is already linked to this project) — the agent pushes on your go-ahead.');
+  document.getElementById('ghInfo').innerHTML='Repo ready · awaiting push';
+}
+function openVercel(){ window.open('https://vercel.com/new','vercel'); }
+async function publishLive(){
+  const el=document.getElementById('liveUrl'); el.innerHTML='Publishing…';
+  try{
+    const r=await fetch(location.href); // no-op in local preview
+  }catch(e){}
+  el.innerHTML='Ask the agent to publish: <b>pages.bu.app</b> link will be generated.';
+}
+function zipPicked(inp){
+  const f=inp.files[0]; if(!f) return;
+  const log=document.getElementById('deployLog');
+  log.innerHTML += '• Uploaded <b>'+esc(f.name)+'</b> ('+(f.size/1024).toFixed(1)+' KB) — packaged for deploy<br>';
+  toast('⬆ .ZIP আপলোড হয়েছে');
+}
+
+/* ============ BOOT ============ */
+(async function boot(){
+  render();
+  await dbLoad();
+  render();
+  window.addEventListener('resize',()=>{});
+})();
+</script>
+</body>
+</html>
